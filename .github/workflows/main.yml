@@ -4,11 +4,14 @@ name: Build APK Android
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - '.github/workflows/main.yml'
       - 'index.html'
       - 'css/**'
       - 'js/**'
+      - 'html/**'
 
 permissions:
   contents: read
@@ -33,7 +36,7 @@ jobs:
           node-version: '20'
 
       - name: Siapkan Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Periksa file website
         run: |
@@ -41,21 +44,23 @@ jobs:
           test -d css
           test -d js
 
-      - name: Siapkan proyek Capacitor
+      - name: Siapkan website untuk APK
         run: |
           mkdir -p www/css www/js
           cp index.html www/index.html
           cp -r css/. www/css/
           cp -r js/. www/js/
 
+      - name: Siapkan Capacitor
+        run: |
           npm init -y
           npm install @capacitor/core@6 @capacitor/android@6
           npm install --save-dev @capacitor/cli@6
 
           cat > capacitor.config.json <<'EOF'
           {
-            "appId": "com.belajarku.catatanku",
-            "appName": "CatatanKu",
+            "appId": "com.faiz.belajarweb",
+            "appName": "Belajar Web",
             "webDir": "www"
           }
           EOF
@@ -67,12 +72,12 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew --no-daemon assembleDebug
 
       - name: Simpan APK
         uses: actions/upload-artifact@v4
         with:
-          name: CatatanKu-APK
+          name: Belajar-Web-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
