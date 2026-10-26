@@ -1,0 +1,53 @@
+name: Build APK Android
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ambil kode website
+        uses: actions/checkout@v4
+
+      - name: Siapkan Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Siapkan Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Siapkan Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Buat proyek Capacitor
+        run: |
+          mkdir -p www
+          cp index.html www/
+          mkdir -p www/css www/js
+          cp -r css/. www/css/
+          cp -r js/. www/js/
+          npm init -y
+          npm install @capacitor/core @capacitor/android
+          npm install -D @capacitor/cli
+          npx cap init CatatanKu com.belajarku.catatanku --web-dir www
+          npx cap add android
+          npx cap sync android
+
+      - name: Bangun APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Simpan APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: CatatanKu-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          
