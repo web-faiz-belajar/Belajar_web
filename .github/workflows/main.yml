@@ -33,7 +33,9 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Terima lisensi Android SDK
-        run: yes | sdkmanager --licenses
+        run: |
+          set +o pipefail
+          yes | sdkmanager --licenses
 
       - name: Buat proyek Capacitor
         run: |
