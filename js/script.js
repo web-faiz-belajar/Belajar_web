@@ -1,6 +1,6 @@
 
 function sapa() {
-    alert("Halo, Faiz! Website kamu berhasil.");
+    alert("aku sedang belajar js.");
 }
 
 document.getElementById("tombol")
