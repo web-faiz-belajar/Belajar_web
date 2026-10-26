@@ -38,11 +38,7 @@ jobs:
       - name: Terima lisensi Android SDK
         shell: bash
         run: |
-          set +o pipefail
-          yes | sdkmanager --licenses
-
-      - name: Pasang Android SDK
-        run: |
+          yes | sdkmanager --licenses || true
           sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Periksa file website
