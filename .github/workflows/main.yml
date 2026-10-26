@@ -24,9 +24,12 @@ jobs:
 
       - name: Siapkan Android SDK
         uses: android-actions/setup-android@v3
+
+      - name: Terima lisensi Android SDK
+       run: yes | sdkmanager --licenses
         
       - name: Pasang Android SDK
-        run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+       run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
         
       - name: Buat proyek Capacitor
         run: |
