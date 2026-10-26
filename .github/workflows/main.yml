@@ -35,12 +35,6 @@ jobs:
       - name: Siapkan Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Terima lisensi Android SDK
-        shell: bash
-        run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
-
       - name: Periksa file website
         run: |
           test -f index.html
