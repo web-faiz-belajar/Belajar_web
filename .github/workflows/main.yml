@@ -10,6 +10,9 @@ on:
       - 'css/**'
       - 'js/**'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,21 +36,40 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Terima lisensi Android SDK
+        shell: bash
         run: |
           set +o pipefail
           yes | sdkmanager --licenses
 
-      - name: Buat proyek Capacitor
+      - name: Pasang Android SDK
         run: |
-          mkdir -p www
-          cp index.html www/
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Periksa file website
+        run: |
+          test -f index.html
+          test -d css
+          test -d js
+
+      - name: Siapkan proyek Capacitor
+        run: |
           mkdir -p www/css www/js
+          cp index.html www/index.html
           cp -r css/. www/css/
           cp -r js/. www/js/
+
           npm init -y
-          npm install @capacitor/core @capacitor/android
-          npm install -D @capacitor/cli
-          npx cap init CatatanKu com.belajarku.catatanku --web-dir www
+          npm install @capacitor/core@6 @capacitor/android@6
+          npm install --save-dev @capacitor/cli@6
+
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.belajarku.catatanku",
+            "appName": "CatatanKu",
+            "webDir": "www"
+          }
+          EOF
+
           npx cap add android
           npx cap sync android
 
@@ -62,3 +84,5 @@ jobs:
         with:
           name: CatatanKu-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
